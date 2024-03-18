@@ -95,12 +95,20 @@ class ActivityMonitor:
         self.file_path = os.path.join(self.folder_path, f"{self.task_name}.txt")
         if not os.path.exists(self.file_path):
             with open(self.file_path, 'w', encoding='utf-8') as log_file:
-                log_file.write("Start Date: {}\n".format(self.start_time.strftime('%Y-%m-%d Time: %H:%M:%S')))
-                log_file.write("Last Activity: {}\n".format(self.start_time.strftime('%Y-%m-%d Time: %H:%M:%S')))
+                log_file.write("Start Date: {}\n".format(datetime.now().strftime('%Y-%m-%d Time: %H:%M:%S')))
+                log_file.write("Last Activity: {}\n".format(datetime.now().strftime('%Y-%m-%d Time: %H:%M:%S')))
                 log_file.write("Total Active Time: 0:0:0\n")
                 log_file.write("Total Inactive Time: 0:0:0\n")
         else:
             self.read_existing_times()
+            # Read the start time from the existing file instead of overwriting it
+            with open(self.file_path, 'r', encoding='utf-8') as file:
+                for line in file:
+                    if line.startswith("Start Date:"):
+                        start_date_str = line.split(":", 1)[1].strip()
+                        self.start_time = datetime.strptime(start_date_str, '%Y-%m-%d Time: %H:%M:%S')
+                        break
+
 
     def on_move(self, x, y):
         # Handle mouse movement
